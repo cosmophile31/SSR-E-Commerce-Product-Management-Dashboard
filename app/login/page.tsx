@@ -1,9 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-// 🔥 THIS IS CRITICAL
+// 🚨 REQUIRED to avoid SSR crash
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -12,8 +11,9 @@ export default function LoginPage() {
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
-    // set cookie in browser only
+    // client-only cookie
     document.cookie = "admin-auth=true; path=/";
+
     router.push("/dashboard");
   }
 
