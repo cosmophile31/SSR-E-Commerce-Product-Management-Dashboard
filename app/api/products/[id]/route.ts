@@ -23,12 +23,11 @@ export async function DELETE(
     );
 
     return NextResponse.json({ success: true });
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json(
       { error: "Failed to delete product" },
       { status: 500 }
     );
   }
 }
-
 
