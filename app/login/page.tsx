@@ -1,55 +1,40 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  async function handleLogin(e: React.FormEvent) {
+  function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    // ✅ SET AUTH COOKIE
+    document.cookie = "admin-auth=true; path=/";
 
-    if (res.ok) {
-      router.push("/dashboard");
-    } else {
-      setError("Invalid credentials");
-    }
+    // ✅ REDIRECT TO DASHBOARD
+    router.push("/dashboard");
   }
 
   return (
-    <main style={{ padding: "40px", maxWidth: "400px", margin: "auto" }}>
+    <main style={{ padding: "40px" }}>
       <h1>Admin Login</h1>
 
       <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br /><br />
+        <div>
+          <label>Email</label><br />
+          <input type="email" required />
+        </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br /><br />
+        <br />
+
+        <div>
+          <label>Password</label><br />
+          <input type="password" required />
+        </div>
+
+        <br />
 
         <button type="submit">Login</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </main>
   );
