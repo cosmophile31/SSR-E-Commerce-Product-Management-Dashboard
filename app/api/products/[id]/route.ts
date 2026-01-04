@@ -1,22 +1,19 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import mongoose from "mongoose";
-import Product from "@/models/Product";
 import { connectDB } from "@/lib/db";
+import Product from "@/models/Product";
+import { revalidatePath } from "next/cache";
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
 
-    // ✅ IMPORTANT: await params
-    const { id } = await context.params;
+    await Product.findByIdAndDelete(params.id);
 
-    await Product.findByIdAndDelete(
-      new mongoose.Types.ObjectId(id)
-    );
+    // Refresh products page
+    revalidatePath("/dashboard/products");
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -26,5 +23,3 @@ export async function DELETE(
     );
   }
 }
-
-
