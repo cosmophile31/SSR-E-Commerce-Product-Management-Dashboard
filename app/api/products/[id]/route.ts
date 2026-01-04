@@ -1,25 +1,34 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+import mongoose from "mongoose";
 import Product from "@/models/Product";
-import { revalidatePath } from "next/cache";
+import { connectDB } from "@/lib/db";
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  _req: any,
+  context: any
 ) {
   try {
     await connectDB();
 
-    await Product.findByIdAndDelete(params.id);
+    const id = context?.params?.id;
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing product id" },
+        { status: 400 }
+      );
+    }
 
-    // Refresh products page
-    revalidatePath("/dashboard/products");
+    await Product.findByIdAndDelete(
+      new mongoose.Types.ObjectId(id)
+    );
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
       { error: "Failed to delete product" },
       { status: 500 }
     );
   }
 }
+
+
