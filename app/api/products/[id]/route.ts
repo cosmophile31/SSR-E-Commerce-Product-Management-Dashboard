@@ -31,3 +31,24 @@ export async function DELETE(
   }
 }
 
+export async function PATCH(
+  _req: any,
+  context: any
+) {
+  try {
+    const body = await _req.json();
+    const { id } = context.params;
+
+    await connectDB();
+
+    await Product.findByIdAndUpdate(id, body);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update product" },
+      { status: 500 }
+    );
+  }
+}
+

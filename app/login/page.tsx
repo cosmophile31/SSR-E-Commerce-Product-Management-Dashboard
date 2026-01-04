@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useEffect } from "react";
 
-// ✅ IMPORTANT: prevent prerendering
+// 🔥 THIS IS CRITICAL
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -12,6 +12,7 @@ export default function LoginPage() {
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
+    // set cookie in browser only
     document.cookie = "admin-auth=true; path=/";
     router.push("/dashboard");
   }

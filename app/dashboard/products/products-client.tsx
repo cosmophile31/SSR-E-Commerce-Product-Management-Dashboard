@@ -1,12 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 type Product = {
   _id: string;
   name: string;
   price: number;
   stock: number;
+  category: string;
 };
 
 export default function ProductsClient({
@@ -14,65 +13,59 @@ export default function ProductsClient({
 }: {
   products: Product[];
 }) {
-  const router = useRouter();
+  async function handleDelete(id: string) {
+    await fetch(`/api/products/${id}`, {
+      method: "DELETE",
+    });
 
-  const handleDelete = async (id: string) => {
-    try {
-      const res = await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        alert("Delete failed");
-        return;
-      }
-
-      router.refresh();
-    } catch (err) {
-      alert("Something went wrong");
-    }
-  };
+    window.location.reload();
+  }
 
   return (
-    <div>
-      {products.map((product) => (
-        <div
-          key={product._id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "12px",
-            marginBottom: "12px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <strong>{product.name}</strong>
-            <p>
-              ₹{product.price} | Stock: {product.stock}
-            </p>
-          </div>
+    <table
+      style={{
+        width: "100%",
+        borderCollapse: "collapse",
+      }}
+    >
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
 
-          {/*  NOT inside a form */}
-          <button
-  type="button"
-  onClick={async () => {
-    alert("Before fetch");
+      <tbody>
+        {products.map((product) => (
+          <tr key={product._id}>
+            <td>{product.name}</td>
+            <td>₹{product.price}</td>
+            <td>{product.stock}</td>
+            <td>{product.category}</td>
 
-    const res = await fetch(
-      `${window.location.origin}/api/products/${product._id}`,
-      { method: "DELETE" }
-    );
+            <td>
+              {/* ✅ EDIT BUTTON */}
+              <a
+                href={`/dashboard/products/${product._id}/edit`}
+                style={{ marginRight: "12px", color: "blue" }}
+              >
+                Edit
+              </a>
 
-    alert("After fetch: " + res.status);
-  }}
->
-  Delete
-</button>
-
-        </div>
-      ))}
-    </div>
+              {/* ✅ DELETE BUTTON */}
+              <button
+                onClick={() => handleDelete(product._id)}
+                style={{ color: "red" }}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
