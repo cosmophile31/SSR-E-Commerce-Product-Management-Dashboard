@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-// 🚨 REQUIRED to avoid SSR crash
+// REQUIRED to avoid SSR crash
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -19,7 +19,10 @@ export default function LoginPage() {
 
   return (
     <main style={{ padding: "40px" }}>
-      <h1>Admin Login</h1>
+      <h1> <p style={{ color: "#6b7280", marginBottom: "20px" }}>
+  Login to manage products, inventory, and dashboard analytics.
+</p>
+ Admin Login</h1>
 
       <form onSubmit={handleLogin}>
         <div>
