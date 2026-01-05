@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 export default function DashboardLayout({
@@ -5,19 +7,24 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  async function handleLogout() {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/login";
+  }
+
   return (
     <div
       style={{
         display: "flex",
         minHeight: "100vh",
-        backgroundColor: "#f3f4f6", // light grey overall bg
+        backgroundColor: "#f3f4f6",
       }}
     >
       {/* Sidebar */}
       <aside
         style={{
           width: "240px",
-          backgroundColor: "#111827", // dark sidebar
+          backgroundColor: "#111827",
           color: "#ffffff",
           padding: "24px",
         }}
@@ -45,9 +52,19 @@ export default function DashboardLayout({
             Add Product
           </Link>
 
-          <Link href="/login" style={linkStyle}>
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            style={{
+              ...linkStyle,
+              textAlign: "left",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: "#7f1d1d",
+            }}
+          >
             Logout
-          </Link>
+          </button>
         </nav>
       </aside>
 
@@ -58,13 +75,14 @@ export default function DashboardLayout({
           padding: "32px",
         }}
       >
-        {/* White content card */}
+        {/* Content Card */}
         <div
           style={{
             backgroundColor: "#ffffff",
-            borderRadius: "8px",
-            padding: "24px",
+            borderRadius: "10px",
+            padding: "32px",
             minHeight: "100%",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
           }}
         >
           {children}

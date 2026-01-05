@@ -5,7 +5,8 @@ type Product = {
   name: string;
   price: number;
   stock: number;
-  category: string;
+  category?: string;
+  images?: string[];
 };
 
 export default function ProductsClient({
@@ -14,10 +15,9 @@ export default function ProductsClient({
   products: Product[];
 }) {
   async function handleDelete(id: string) {
-    await fetch(`/api/products/${id}`, {
-      method: "DELETE",
-    });
+    if (!confirm("Are you sure you want to delete this product?")) return;
 
+    await fetch(`/api/products/${id}`, { method: "DELETE" });
     window.location.reload();
   }
 
@@ -26,39 +26,43 @@ export default function ProductsClient({
       style={{
         width: "100%",
         borderCollapse: "collapse",
+        marginTop: "20px",
       }}
     >
       <thead>
-        <tr>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Category</th>
-          <th>Actions</th>
+        <tr style={{ backgroundColor: "#f9fafb" }}>
+          <th style={th}>Product</th>
+          <th style={th}>Price</th>
+          <th style={th}>Stock</th>
+          <th style={th}>Category</th>
+          <th style={th}>Actions</th>
         </tr>
       </thead>
 
       <tbody>
-        {products.map((product) => (
-          <tr key={product._id}>
-            <td>{product.name}</td>
-            <td>₹{product.price}</td>
-            <td>{product.stock}</td>
-            <td>{product.category}</td>
+        {products.map((p) => (
+          <tr key={p._id} style={{ borderBottom: "1px solid #e5e7eb" }}>
+            <td style={td}>
+              <strong>{p.name}</strong>
+            </td>
 
-            <td>
-              {/* ✅ EDIT BUTTON */}
+            <td style={td}>₹{p.price.toLocaleString()}</td>
+
+            <td style={td}>{p.stock}</td>
+
+            <td style={td}>{p.category || "-"}</td>
+
+            <td style={td}>
               <a
-                href={`/dashboard/products/${product._id}/edit`}
-                style={{ marginRight: "12px", color: "blue" }}
+                href={`/dashboard/products/${p._id}/edit`}
+                style={editBtn}
               >
                 Edit
               </a>
 
-              {/* ✅ DELETE BUTTON */}
               <button
-                onClick={() => handleDelete(product._id)}
-                style={{ color: "red" }}
+                onClick={() => handleDelete(p._id)}
+                style={deleteBtn}
               >
                 Delete
               </button>
@@ -69,3 +73,28 @@ export default function ProductsClient({
     </table>
   );
 }
+
+const th = {
+  textAlign: "left" as const,
+  padding: "14px",
+  fontWeight: "600",
+};
+
+const td = {
+  padding: "14px",
+};
+
+const editBtn = {
+  marginRight: "14px",
+  color: "#2563eb",
+  textDecoration: "none",
+  fontWeight: 500,
+};
+
+const deleteBtn = {
+  color: "#dc2626",
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  fontWeight: 500,
+};
