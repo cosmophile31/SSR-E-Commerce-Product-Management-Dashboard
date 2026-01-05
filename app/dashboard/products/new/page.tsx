@@ -1,120 +1,114 @@
-"use client";
+import { connectDB } from "@/lib/db";
+import Product from "@/models/Product";
+import { redirect } from "next/navigation";
+import cloudinary from "@/lib/cloudinary";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export default function NewProductPage() {
-  const router = useRouter();
+  async function createProduct(formData: FormData) {
+  "use server";
 
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [category, setCategory] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const name = formData.get("name") as string;
+  const price = Number(formData.get("price"));
+  const stock = Number(formData.get("stock"));
+  const category = formData.get("category") as string;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  const imageFile = formData.get("image") as File;
 
-    let imageUrl = "";
+  // 🔥 Convert image to buffer
+  const bytes = await imageFile.arrayBuffer();
+  const buffer = Buffer.from(bytes);
 
-    // 🔹 Upload image to Cloudinary
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
+  // 🔥 Upload directly to Cloudinary
+  const uploadResult = await new Promise<any>((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      { folder: "products" },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    ).end(buffer);
+  });
 
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+  const imageUrl = uploadResult.secure_url;
 
-      const uploadData = await uploadRes.json();
-      imageUrl = uploadData.url;
-    }
+  await connectDB();
 
-    // 🔹 Create product
-    await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        price,
-        stock,
-        category,
-        images: imageUrl ? [imageUrl] : [],
-      }),
-    });
+  await Product.create({
+    name,
+    price,
+    stock,
+    category,
+    images: [imageUrl],
+  });
 
-    setLoading(false);
-    router.push("/dashboard/products");
-  }
+  redirect("/dashboard/products");
+}
+
 
   return (
     <div>
       <h1 style={{ fontSize: "24px", marginBottom: "20px" }}>
-        Add New Product
+        Add Product
       </h1>
 
-      <form onSubmit={handleSubmit}>
+      <form action={createProduct} style={{ display: "grid", gap: "16px" }}>
         <div>
-          <label>Name</label><br />
-          <input value={name} onChange={e => setName(e.target.value)} required />
+          <label>Name</label>
+          <br />
+          <input name="name" required style={inputStyle} />
         </div>
 
-        <br />
-
         <div>
-          <label>Price</label><br />
-          <input
-            type="number"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
-            required
-          />
+          <label>Price</label>
+          <br />
+          <input name="price" type="number" required style={inputStyle} />
         </div>
 
-        <br />
-
         <div>
-          <label>Stock</label><br />
-          <input
-            type="number"
-            value={stock}
-            onChange={e => setStock(e.target.value)}
-            required
-          />
+          <label>Stock</label>
+          <br />
+          <input name="stock" type="number" required style={inputStyle} />
         </div>
 
-        <br />
-
         <div>
-          <label>Category</label><br />
-          <input
-            value={category}
-            onChange={e => setCategory(e.target.value)}
-          />
+          <label>Category</label>
+          <br />
+          <input name="category" style={inputStyle} />
         </div>
 
-        <br />
-
+        {/* 🔥 IMAGE INPUT */}
         <div>
-          <label>Product Image</label><br />
+          <label>Product Image</label>
+          <br />
           <input
             type="file"
+            name="image"
             accept="image/*"
-            onChange={e => setImageFile(e.target.files?.[0] || null)}
+            required
           />
         </div>
 
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Create Product"}
-        </button>
+        <button style={buttonStyle}>Create Product</button>
       </form>
     </div>
   );
 }
 
+const inputStyle = {
+  padding: "8px",
+  borderRadius: "6px",
+  border: "1px solid #d1d5db",
+  width: "300px",
+};
 
+const buttonStyle = {
+  backgroundColor: "#2563eb",
+  color: "white",
+  padding: "10px 16px",
+  borderRadius: "6px",
+  border: "none",
+  width: "fit-content",
+};
