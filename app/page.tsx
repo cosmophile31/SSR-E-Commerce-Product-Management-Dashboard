@@ -73,15 +73,7 @@ export default function HomePage() {
           Go to Admin Login →
         </Link>
 
-        <p
-          style={{
-            marginTop: "24px",
-            fontSize: "13px",
-            color: "#9ca3af",
-          }}
-        >
-          Demo credentials are mentioned in the project documentation.
-        </p>
+        
       </div>
     </main>
   );
