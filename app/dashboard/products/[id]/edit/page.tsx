@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { redirect } from "next/navigation";
+import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ export default async function EditProductPage({
 }) {
   await connectDB();
 
-  const product = await Product.findById(params.id).lean();
+  
+
+const product = await Product.findById(
+  new mongoose.Types.ObjectId(params.id)
+).lean();
+
 
   if (!product) {
     return <div>Product not found</div>;

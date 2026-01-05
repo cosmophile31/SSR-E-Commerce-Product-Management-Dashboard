@@ -15,11 +15,15 @@ export default function ProductsClient({
   products: Product[];
 }) {
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+  if (!confirm("Delete this product?")) return;
 
-    await fetch(`/api/products/${id}`, { method: "DELETE" });
-    window.location.reload();
-  }
+  await fetch(`/api/products/${id}`, {
+    method: "DELETE",
+  });
+
+  window.location.href = "/dashboard/products";
+}
+
 
   return (
     <table
@@ -42,8 +46,29 @@ export default function ProductsClient({
       <tbody>
         {products.map((p) => (
           <tr key={p._id} style={{ borderBottom: "1px solid #e5e7eb" }}>
+            {/* ✅ PRODUCT + IMAGE */}
             <td style={td}>
-              <strong>{p.name}</strong>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                {p.images && p.images.length > 0 && (
+                  <img
+                    src={p.images[0]}
+                    alt={p.name}
+                    width={40}
+                    height={40}
+                    style={{
+                      borderRadius: "6px",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+                <strong>{p.name}</strong>
+              </div>
             </td>
 
             <td style={td}>₹{p.price.toLocaleString()}</td>
@@ -73,6 +98,8 @@ export default function ProductsClient({
     </table>
   );
 }
+
+/* ---------- styles ---------- */
 
 const th = {
   textAlign: "left" as const,

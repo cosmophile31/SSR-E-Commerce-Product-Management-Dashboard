@@ -9,18 +9,15 @@ export const revalidate = 0;
 export default async function ProductsPage() {
   await connectDB();
 
-  const products = await Product.find();
-
-  // IMP
-  const plainProducts = JSON.parse(JSON.stringify(products));
+  const products = await Product.find().lean();
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h1 style={{ fontSize: "24px", marginBottom: "20px" }}>
         Products
       </h1>
 
-      <ProductsClient products={plainProducts} />
+      <ProductsClient products={products} />
     </div>
   );
 }
