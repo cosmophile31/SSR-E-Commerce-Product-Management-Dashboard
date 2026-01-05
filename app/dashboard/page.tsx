@@ -61,14 +61,31 @@ function StatCard({
   return (
     <div
       style={{
-        backgroundColor: "#ffffff",
-        borderRadius: "10px",
-        padding: "24px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+        background: "linear-gradient(135deg, #1f2937, #111827)",
+        color: "#ffffff",
+        borderRadius: "14px",
+        padding: "26px",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
       }}
     >
-      <p style={{ color: "#6b7280", marginBottom: "8px" }}>{title}</p>
-      <h2 style={{ fontSize: "26px", fontWeight: "bold" }}>{value}</h2>
+      <p
+        style={{
+          fontSize: "14px",
+          opacity: 0.85,
+          marginBottom: "12px",
+        }}
+      >
+        {title}
+      </p>
+
+      <h2
+        style={{
+          fontSize: "30px",
+          fontWeight: "bold",
+        }}
+      >
+        {value}
+      </h2>
     </div>
   );
 }

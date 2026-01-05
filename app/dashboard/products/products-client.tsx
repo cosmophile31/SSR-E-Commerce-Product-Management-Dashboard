@@ -92,6 +92,26 @@ export default function ProductsClient({
                 Delete
               </button>
             </td>
+            <td style={td}>
+  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    {p.images && p.images.length > 0 && (
+      <img
+        src={p.images[0]}
+        alt={p.name}
+        style={{
+          width: "42px",
+          height: "42px",
+          objectFit: "cover",
+          borderRadius: "6px",
+          border: "1px solid #e5e7eb",
+        }}
+      />
+    )}
+
+    <strong>{p.name}</strong>
+  </div>
+</td>
+
           </tr>
         ))}
       </tbody>
