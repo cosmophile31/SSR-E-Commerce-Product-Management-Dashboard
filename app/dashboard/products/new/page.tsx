@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { redirect } from "next/navigation";
 import cloudinary from "@/lib/cloudinary";
+import { redirect } from "next/navigation";
 
 
 export const dynamic = "force-dynamic";
@@ -19,11 +19,11 @@ export default function NewProductPage() {
 
   const imageFile = formData.get("image") as File;
 
-  // 🔥 Convert image to buffer
+  //  Convert image to buffer
   const bytes = await imageFile.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  // 🔥 Upload directly to Cloudinary
+  //  Upload directly to Cloudinary
   const uploadResult = await new Promise<any>((resolve, reject) => {
     cloudinary.uploader.upload_stream(
       { folder: "products" },
@@ -81,7 +81,7 @@ export default function NewProductPage() {
           <input name="category" style={inputStyle} />
         </div>
 
-        {/* 🔥 IMAGE INPUT */}
+        {/*  IMAGE INPUT */}
         <div>
           <label>Product Image</label>
           <br />
@@ -92,6 +92,11 @@ export default function NewProductPage() {
             required
           />
         </div>
+        <input type="file" name="image" accept="image/*" required />
+
+        console.log("Image file:", imageFile?.name, imageFile?.size);
+
+
 
         <button style={buttonStyle}>Create Product</button>
       </form>
