@@ -1,6 +1,6 @@
-import Product from "@/models/Product";
 import { connectDB } from "@/lib/db";
-import { notFound, redirect } from "next/navigation";
+import Product from "@/models/Product";
+import { redirect, notFound } from "next/navigation";
 
 export default async function EditProductPage({
   params,
@@ -39,34 +39,10 @@ export default async function EditProductPage({
         Edit Product
       </h1>
 
-      <input
-        name="name"
-        defaultValue={product.name}
-        required
-        style={input}
-      />
-
-      <input
-        name="price"
-        type="number"
-        defaultValue={product.price}
-        required
-        style={input}
-      />
-
-      <input
-        name="stock"
-        type="number"
-        defaultValue={product.stock}
-        required
-        style={input}
-      />
-
-      <input
-        name="category"
-        defaultValue={product.category}
-        style={input}
-      />
+      <input name="name" defaultValue={product.name} style={input} />
+      <input name="price" type="number" defaultValue={product.price} style={input} />
+      <input name="stock" type="number" defaultValue={product.stock} style={input} />
+      <input name="category" defaultValue={product.category || ""} style={input} />
 
       <button style={btn}>Update Product</button>
     </form>

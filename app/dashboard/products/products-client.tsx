@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+
 type Product = {
   _id: string;
   name: string;
@@ -9,27 +12,46 @@ type Product = {
   images?: string[];
 };
 
-export default function ProductsClient({
-  products,
-}: {
-  products: Product[];
-}) {
-  async function handleDelete(id: string) {
-  if (!confirm("Are you sure you want to delete this product?")) return;
+export default function ProductsClient() {
+  const router = useRouter();
 
-  const res = await fetch(`/api/products/${id}`, {
-    method: "DELETE",
+  // ✅ React Query fetching products
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+  } = useQuery<Product[]>({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products");
+      if (!res.ok) throw new Error("Failed to fetch products");
+      return res.json();
+    },
   });
 
-  if (!res.ok) {
-    alert("Failed to delete product");
-    return;
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    const res = await fetch(`/api/products/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      alert("Failed to delete product");
+      return;
+    }
+
+    // Refresh React Query + SSR data
+    router.refresh();
   }
 
-  // Refresh without full reload (SSR-safe)
-  window.location.href = "/dashboard/products";
-}
+  if (isLoading) {
+    return <p>Loading products...</p>;
+  }
 
+  if (isError) {
+    return <p>Failed to load products.</p>;
+  }
 
   return (
     <table
@@ -52,22 +74,15 @@ export default function ProductsClient({
       <tbody>
         {products.map((p) => (
           <tr key={p._id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-            {/* ✅ PRODUCT + IMAGE */}
             <td style={td}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                }}
-              >
-                {p.images && p.images.length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                {p.images?.[0] && (
                   <img
                     src={p.images[0]}
                     alt={p.name}
-                    width={40}
-                    height={40}
                     style={{
+                      width: "40px",
+                      height: "40px",
                       borderRadius: "6px",
                       objectFit: "cover",
                     }}
@@ -77,10 +92,8 @@ export default function ProductsClient({
               </div>
             </td>
 
-            <td style={td}>₹{p.price.toLocaleString()}</td>
-
+            <td style={td}>₹{p.price}</td>
             <td style={td}>{p.stock}</td>
-
             <td style={td}>{p.category || "-"}</td>
 
             <td style={td}>
@@ -98,7 +111,6 @@ export default function ProductsClient({
                 Delete
               </button>
             </td>
-            
           </tr>
         ))}
       </tbody>
@@ -106,12 +118,9 @@ export default function ProductsClient({
   );
 }
 
-/* ---------- styles ---------- */
-
 const th = {
   textAlign: "left" as const,
   padding: "14px",
-  fontWeight: "600",
 };
 
 const td = {

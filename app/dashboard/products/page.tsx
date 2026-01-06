@@ -17,7 +17,7 @@ export default async function ProductsPage() {
         Products
       </h1>
 
-      <ProductsClient products={products} />
+      <ProductsClient />
     </div>
   );
 }
