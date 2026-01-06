@@ -9,6 +9,17 @@ export default async function DashboardPage() {
 
   const products = await Product.find().lean();
 
+  const totalStock = products.reduce(
+  (sum, p) => sum + p.stock,
+  0
+);
+
+const totalInventoryValue = products.reduce(
+  (sum, p) => sum + p.price * p.stock,
+  0
+);
+
+
   const plainProducts = products.map((p) => ({
     name: p.name,
     stock: p.stock,
@@ -47,8 +58,39 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+  <div style={cardStyle}>
+    <h4>Total Stock</h4>
+    <p style={valueStyle}>{totalStock}</p>
+  </div>
+
+  <div style={cardStyle}>
+    <h4>Inventory Value</h4>
+    <p style={valueStyle}>
+      ₹{totalInventoryValue.toLocaleString()}
+    </p>
+  </div>
+</div>
+
+
+      
+
       {/*  Recharts Visualization */}
       <ProductStockChart products={plainProducts} />
     </div>
   );
 }
+const cardStyle = {
+  background: "#ffffff",
+  padding: "20px",
+  borderRadius: "8px",
+  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+  minWidth: "200px",
+};
+
+const valueStyle = {
+  fontSize: "26px",
+  fontWeight: "bold",
+  marginTop: "8px",
+};
+
