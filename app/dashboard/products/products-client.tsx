@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 
 type Product = {
   _id: string;
@@ -12,50 +11,23 @@ type Product = {
   images?: string[];
 };
 
-export default function ProductsClient() {
+export default function ProductsClient({
+  products,
+}: {
+  products: Product[];
+}) {
   const router = useRouter();
-
-  // ✅ React Query fetching products
-  const {
-  data: products = [],
-  isLoading,
-  isError,
-} = useQuery<Product[]>({
-  queryKey: ["products"],
-  queryFn: async () => {
-    const res = await fetch("/api/products");
-    if (!res.ok) throw new Error("Failed to fetch products");
-
-    const data = await res.json();
-
-    // ✅ IMPORTANT FIX
-    return data.products;
-  },
-});
-
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
-    const res = await fetch(`/api/products/${id}`, {
-      method: "DELETE",
-    });
+    await fetch(`/api/products/${id}`, { method: "DELETE" });
 
-    if (!res.ok) {
-      alert("Failed to delete product");
-      return;
-    }
-
-    // Refresh React Query + SSR data
-    router.refresh();
+    router.refresh(); // refresh SSR data
   }
 
-  if (isLoading) {
-    return <p>Loading products...</p>;
-  }
-
-  if (isError) {
-    return <p>Failed to load products.</p>;
+  if (!products.length) {
+    return <p>No products found.</p>;
   }
 
   return (
@@ -126,6 +98,7 @@ export default function ProductsClient() {
 const th = {
   textAlign: "left" as const,
   padding: "14px",
+  fontWeight: 600,
 };
 
 const td = {
