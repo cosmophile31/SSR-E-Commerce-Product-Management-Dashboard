@@ -17,17 +17,22 @@ export default function ProductsClient() {
 
   // ✅ React Query fetching products
   const {
-    data: products = [],
-    isLoading,
-    isError,
-  } = useQuery<Product[]>({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const res = await fetch("/api/products");
-      if (!res.ok) throw new Error("Failed to fetch products");
-      return res.json();
-    },
-  });
+  data: products = [],
+  isLoading,
+  isError,
+} = useQuery<Product[]>({
+  queryKey: ["products"],
+  queryFn: async () => {
+    const res = await fetch("/api/products");
+    if (!res.ok) throw new Error("Failed to fetch products");
+
+    const data = await res.json();
+
+    // ✅ IMPORTANT FIX
+    return data.products;
+  },
+});
+
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this product?")) return;
