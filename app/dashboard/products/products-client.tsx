@@ -15,12 +15,18 @@ export default function ProductsClient({
   products: Product[];
 }) {
   async function handleDelete(id: string) {
-  if (!confirm("Delete this product?")) return;
+  if (!confirm("Are you sure you want to delete this product?")) return;
 
-  await fetch(`/api/products/${id}`, {
+  const res = await fetch(`/api/products/${id}`, {
     method: "DELETE",
   });
 
+  if (!res.ok) {
+    alert("Failed to delete product");
+    return;
+  }
+
+  // Refresh without full reload (SSR-safe)
   window.location.href = "/dashboard/products";
 }
 

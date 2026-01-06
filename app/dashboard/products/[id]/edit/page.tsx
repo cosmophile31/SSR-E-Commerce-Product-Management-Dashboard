@@ -1,9 +1,6 @@
-import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { redirect } from "next/navigation";
-import mongoose from "mongoose";
-
-export const dynamic = "force-dynamic";
+import { connectDB } from "@/lib/db";
+import { notFound, redirect } from "next/navigation";
 
 export default async function EditProductPage({
   params,
@@ -12,16 +9,9 @@ export default async function EditProductPage({
 }) {
   await connectDB();
 
-  
+  const product = await Product.findById(params.id).lean();
 
-const product = await Product.findById(
-  new mongoose.Types.ObjectId(params.id)
-).lean();
-
-
-  if (!product) {
-    return <div>Product not found</div>;
-  }
+  if (!product) return notFound();
 
   async function updateProduct(formData: FormData) {
     "use server";
@@ -44,75 +34,55 @@ const product = await Product.findById(
   }
 
   return (
-    <div>
+    <form action={updateProduct} style={{ maxWidth: "500px" }}>
       <h1 style={{ fontSize: "24px", marginBottom: "20px" }}>
         Edit Product
       </h1>
 
-      <form action={updateProduct} style={{ display: "grid", gap: "16px" }}>
-        <div>
-          <label>Name</label>
-          <br />
-          <input
-            name="name"
-            defaultValue={product.name}
-            required
-            style={inputStyle}
-          />
-        </div>
+      <input
+        name="name"
+        defaultValue={product.name}
+        required
+        style={input}
+      />
 
-        <div>
-          <label>Price</label>
-          <br />
-          <input
-            name="price"
-            type="number"
-            defaultValue={product.price}
-            required
-            style={inputStyle}
-          />
-        </div>
+      <input
+        name="price"
+        type="number"
+        defaultValue={product.price}
+        required
+        style={input}
+      />
 
-        <div>
-          <label>Stock</label>
-          <br />
-          <input
-            name="stock"
-            type="number"
-            defaultValue={product.stock}
-            required
-            style={inputStyle}
-          />
-        </div>
+      <input
+        name="stock"
+        type="number"
+        defaultValue={product.stock}
+        required
+        style={input}
+      />
 
-        <div>
-          <label>Category</label>
-          <br />
-          <input
-            name="category"
-            defaultValue={product.category}
-            style={inputStyle}
-          />
-        </div>
+      <input
+        name="category"
+        defaultValue={product.category}
+        style={input}
+      />
 
-        <button style={buttonStyle}>Update Product</button>
-      </form>
-    </div>
+      <button style={btn}>Update Product</button>
+    </form>
   );
 }
 
-const inputStyle = {
-  padding: "8px",
-  borderRadius: "6px",
-  border: "1px solid #d1d5db",
-  width: "300px",
+const input = {
+  width: "100%",
+  padding: "10px",
+  marginBottom: "12px",
 };
 
-const buttonStyle = {
-  backgroundColor: "#2563eb",
-  color: "white",
+const btn = {
   padding: "10px 16px",
-  borderRadius: "6px",
+  backgroundColor: "#2563eb",
+  color: "#fff",
   border: "none",
-  width: "fit-content",
+  borderRadius: "6px",
 };

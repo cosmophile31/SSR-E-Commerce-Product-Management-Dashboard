@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import cloudinary from "@/lib/cloudinary";
 import { redirect } from "next/navigation";
+import { productSchema } from "@/lib/validators/product";
 
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,19 @@ export default function NewProductPage() {
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
   const category = formData.get("category") as string;
+
+const parsed = productSchema.safeParse({
+  name,
+  price,
+  stock,
+  category,
+});
+
+if (!parsed.success) {
+  throw new Error("Validation failed");
+}
+
+
 
   const imageFile = formData.get("image") as File;
 
