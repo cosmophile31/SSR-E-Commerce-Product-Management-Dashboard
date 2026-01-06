@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SSR E-Commerce Product Management Dashboard
 
-## Getting Started
+This project is a Server-Side Rendered (SSR) Admin Dashboard built with Next.js for managing products in an e-commerce system.
+It focuses on performance, clean architecture, and real-world admin workflows like product CRUD, image uploads, analytics, and authentication.
 
-First, run the development server:
+# Live Project
 
-```bash
+Live URL: https://ssr-ecommerce-productmanagement-das.vercel.app/
+
+Login Page: /login
+
+# Demo Admin Credentials
+
+Use these credentials to access the dashboard:
+
+Email: admin@demo.com
+
+Password: admin123
+
+
+These are dummy credentials created only for evaluation and demo purposes.
+
+
+# What You Can Do?
+
+-Log in as an admin and securely access the dashboard
+
+-View all products rendered using SSR
+
+-Add new products with image uploads
+
+-View product stock, price, and category
+
+-Delete and edit products (The Edit and Delete actions are intentionally kept minimal in the current submission. While the UI for Edit and Delete actions is present and aligned with real-world admin dashboards, full mutation handling and optimistic updates were deprioritized to focus on SSR performance, backend integration, and deployment stability. The current architecture fully supports extending Edit/Delete functionality and can be completed with additional client-side state handling if required.)
+
+-See dashboard analytics like:
+
+Total number of products
+
+Total stock available
+
+Total inventory value
+
+-Upload and store images securely using Cloudinary
+
+-Log out safely
+
+# Tech Stack
+Core: Next.js (App Router, SSR), React + TypeScript
+
+Backend & Database: MongoDB Atlas, Mongoose
+
+Image Upload: Cloudinary
+
+Charts & Analytics: Recharts
+
+Validation: Zod
+
+Deployment: Vercel
+
+
+# Application Workflow
+Admin requests dashboard
+→ Server fetches products from MongoDB
+→ Page rendered on server
+→ HTML sent to browser
+→ Admin interacts with UI
+→ Server updates data
+→ UI refreshes with latest data
+
+# Dashboard Metrics
+
+The dashboard shows:
+
+Total Products
+
+Total Stock
+
+Total Inventory Value
+
+Stock distribution chart
+
+These values are calculated server-side for accuracy and performance.
+
+# Setup Instructions
+1. Clone the repository
+
+git clone https://github.com/cosmophile31/SSR-E-Commerce-Product-Management-Dashboard
+
+cd ecommerce-admin
+
+2. Install dependencies
+
+npm install
+
+3. Configure environment variables
+
+
+Create a .env.local file in the project root and add:
+
+MONGODB_URI=your_mongodb_connection_string
+
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+Do not commit .env.local to GitHub.
+
+4. Run the development server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:3000 in  the browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
